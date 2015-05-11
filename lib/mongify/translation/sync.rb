@@ -29,8 +29,8 @@ module Mongify
         sync_data
         set_last_updated_at
         copy_embedded_tables(true)
-        sync_update_reference_ids(true)
-        copy_polymorphic_tables
+        sync_update_reference_ids
+        copy_polymorphic_tables(true)
         nil
       end
 
