@@ -13,8 +13,8 @@ module Mongify
         setup_db_index
         copy_data
         update_reference_ids
-        copy_embedded_tables
-        copy_polymorphic_tables
+        copy_embedded_tables(false)
+        copy_polymorphic_tables(false)
         remove_pre_mongified_ids
         nil
       end
@@ -26,7 +26,7 @@ module Mongify
       # Does the straight copy (of tables)
       def copy_data
         self.copy_tables.each do |t|
-          sql_connection.select_rows(t.sql_name, true) do |rows, page, total_pages|
+          sql_connection.select_rows(t.sql_name, false) do |rows, page, total_pages|
             Mongify::Status.publish('copy_data', :size => rows.count, :name => "Copying #{t.name} (#{page}/#{total_pages})", :action => 'add')
             insert_rows = []
             rows.each do |row|
@@ -42,7 +42,7 @@ module Mongify
       # Updates the reference ids in the no sql database
       def update_reference_ids
         self.copy_tables.each do |t|
-          rows = no_sql_connection.select_rows(t.name)
+          rows = no_sql_connection.select_rows(t.name, false)
           Mongify::Status.publish('update_references', :size => rows.count, :name => "Updating References #{t.name}", :action => 'add')
           rows.each do |row|
             id = row["_id"]
