@@ -32,9 +32,9 @@ module Mongify
       end
 
       # Does a copy of the embedded tables
-      def copy_embedded_tables
+      def copy_embedded_tables(is_sync)
         self.embed_tables.each do |t|
-          sql_connection.select_rows(t.sql_name) do |rows, page, total_pages|
+          sql_connection.select_rows(t.sql_name, is_sync) do |rows, page, total_pages|
             Mongify::Status.publish('copy_embedded', :size => rows.count, :name => "Embedding #{t.name} (#{page}/#{total_pages})", :action => 'add')
             rows.each do |row|
               target_row = no_sql_connection.find_one(t.embed_in, {:pre_mongified_id => get_type_casted_value(t, t.embed_on, row)})
@@ -57,10 +57,10 @@ module Mongify
       end
 
       # Moves over polymorphic data
-      def copy_polymorphic_tables
+      def copy_polymorphic_tables(is_sync)
         self.polymorphic_tables.each do |t|
           polymorphic_id_col, polymorphic_type_col = "#{t.polymorphic_as}_id", "#{t.polymorphic_as}_type"
-          sql_connection.select_rows(t.sql_name) do |rows, page, total_pages|
+          sql_connection.select_rows(t.sql_name, is_sync) do |rows, page, total_pages|
             Mongify::Status.publish('copy_polymorphic', :size => rows.count, :name => "Polymorphicizing #{t.name}", :action => 'add')
             rows.each do |row|
 

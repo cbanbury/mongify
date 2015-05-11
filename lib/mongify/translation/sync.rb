@@ -28,8 +28,8 @@ module Mongify
         setup_db_index
         sync_data
         set_last_updated_at
-        copy_embedded_tables
-        sync_update_reference_ids
+        copy_embedded_tables(true)
+        sync_update_reference_ids(true)
         copy_polymorphic_tables
         nil
       end
