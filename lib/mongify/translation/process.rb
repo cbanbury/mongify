@@ -42,7 +42,7 @@ module Mongify
       # Updates the reference ids in the no sql database
       def update_reference_ids
         self.copy_tables.each do |t|
-          rows = no_sql_connection.select_rows(t.name, false)
+          rows = no_sql_connection.select_rows(t.name)
           Mongify::Status.publish('update_references', :size => rows.count, :name => "Updating References #{t.name}", :action => 'add')
           rows.each do |row|
             id = row["_id"]
