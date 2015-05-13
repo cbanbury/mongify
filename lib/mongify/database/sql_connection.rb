@@ -109,7 +109,7 @@ module Mongify
         q_batch = "ORDER BY id LIMIT #{batch_size} OFFSET #{(page - 1) * batch_size}"
         q_sync = "#{SYNC_HELPER_TABLE} u WHERE t.updated_at > u.last_updated_at AND u.table_name = '#{table_name} '"
 
-        q = q_select + ', ' + q_batch
+        q = q_select + q_batch
         if is_sync
             q = q_select + ', ' + q_sync + ' ' + q_batch
         end
