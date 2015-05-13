@@ -51,6 +51,13 @@ module Mongify
             self.sql_connection.execute("INSERT INTO #{SYNC_HELPER_TABLE} (table_name, last_updated_at) VALUES ('#{t.sql_name}', '1970-01-01')")
           end
         end
+
+        # insert missing records for embedded tables
+        self.embed_tables.each do |t|
+            if self.sql_connection.count(SYNC_HELPER_TABLE, "table_name = '#{t.sql_name}'") == 0
+              self.sql_connection.execute("INSERT INTO #{SYNC_HELPER_TABLE} (table_name, last_updated_at) VALUES ('#{t.sql_name}', '1970-01-01')")
+            end
+        end
       end
 
       # Does the straight copy (of tables)
